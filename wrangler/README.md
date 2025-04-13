@@ -216,3 +216,70 @@ Cask is a trademark of Cask Data, Inc. All rights reserved.
 
 Apache, Apache HBase, and HBase are trademarks of The Apache Software Foundation. Used with
 permission. No endorsement by The Apache Software Foundation is implied by the use of these marks.
+
+
+# Wrangler
+
+Wrangler is a interactive tool for data cleansing and transformation. Currently, it supports the creation of ETL Pipelines that execute on Apache Spark.
+
+## Byte Size and Time Duration Units Parsers
+
+The Wrangler library now supports native parsing of byte size and time duration units, making it easier to work with data containing file sizes or time intervals.
+
+### Byte Size Units
+
+Byte size units allow you to specify sizes with appropriate units like B, KB, MB, GB, TB, or PB. Examples include `10KB`, `2.5MB`, or `1GB`.
+
+Supported units:
+- B: Bytes
+- KB: Kilobytes (1024 bytes)
+- MB: Megabytes (1024 kilobytes)
+- GB: Gigabytes (1024 megabytes)
+- TB: Terabytes (1024 gigabytes)
+- PB: Petabytes (1024 terabytes)
+
+### Time Duration Units
+
+Time duration units allow you to specify time intervals with appropriate units like ms, s, m/min, h, or d. Examples include `150ms`, `2.5s`, or `1.5h`.
+
+Supported units:
+- ms: Milliseconds
+- s: Seconds
+- m/min: Minutes
+- h: Hours
+- d: Days
+
+### New Directive: aggregate-stats
+
+A new directive `aggregate-stats` has been added to demonstrate the usage of byte size and time duration units. This directive aggregates (sums) byte sizes and time durations from specified columns and outputs the results in desired units.
+
+#### Usage
+
+```
+aggregate-stats :size_column :time_column total_size_column total_time_column [size_unit] [time_unit]
+```
+
+Parameters:
+- `size_column`: Source column containing byte sizes
+- `time_column`: Source column containing time durations
+- `total_size_column`: Target column name for the aggregated size
+- `total_time_column`: Target column name for the aggregated time
+- `size_unit` (optional): Output unit for size (B, KB, MB, GB, TB, PB). Default: MB
+- `time_unit` (optional): Output unit for time (ms, s, m, min, h, d). Default: s
+
+#### Examples
+
+Basic usage:
+```
+aggregate-stats :data_transfer :response_time total_size_mb total_time_sec
+```
+
+Specifying output units:
+```
+aggregate-stats :data_transfer :response_time total_size_gb total_time_min 'GB' 'min'
+```
+
+The directive handles various input formats:
+- ByteSize/TimeDuration objects: `10MB`, `500ms`
+- String representations: `"10MB"`, `"500ms"`
+- Raw numbers (interpreted as bytes for size and milliseconds for time): `10240`, `500`
